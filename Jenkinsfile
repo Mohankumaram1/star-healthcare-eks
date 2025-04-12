@@ -8,7 +8,7 @@ pipeline {
     stage('Git Checkout') {
       steps {
         echo 'This stage is to clone the repo from github'
-        git branch: 'master', url: 'https://github.com/rohinicbabu/star-agile-health-care.git'
+        git branch: 'master', url: 'https://github.com/Mohankumaram1/star-healthcare-eks.git'
                         }
             }
     stage('Create Package') {
@@ -17,16 +17,10 @@ pipeline {
         sh 'mvn package'
                           }
             }
-    stage('Generate Test Report') {
-      steps {
-        echo 'This stage generate Test report using TestNG'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/var/lib/jenkins/workspace/Healthcare/target/surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-                          }
-            }
      stage('Create Docker Image') {
       steps {
         echo 'This stage will Create a Docker image'
-        sh 'docker build -t cbabu85/healthcare:1.0 .'
+        sh 'docker build -t mohankumar12/healthcare:7.0 .'
                           }
             }
      stage('Login to Dockerhub') {
@@ -40,7 +34,7 @@ pipeline {
     stage('Docker Push-Image') {
       steps {
         echo 'This stage will push my new image to the dockerhub'
-        sh 'docker push cbabu85/healthcare:1.0'
+        sh 'docker push mohankumar12/healthcare:7.0'
             }
       }
     stage('AWS-Login') {
@@ -68,7 +62,7 @@ pipeline {
     }
     stage('get kubeconfig') {
       steps {
-        sh 'aws eks update-kubeconfig --region us-east-1 --name test-cluster'
+        sh 'aws eks update-kubeconfig --region ap-south-1 --name test-cluster'
         sh 'kubectl get nodes'
       }
     }
@@ -78,40 +72,8 @@ pipeline {
         sh 'kubectl get svc'
       }
     }
-    stage('Terraform Operations for Production workspace') {
-      when {
-        expression {
-          return currentBuild.currentResult == 'SUCCESS'
-        }
-      }
-      steps {
-        script {
-          sh '''
-            terraform workspace select prod || terraform workspace new prod
-            terraform init
-            terraform plan
-            terraform destroy -auto-approve
-          '''
-        }
-      }
-    }
-    stage('Terraform destroy & apply for production workspace') {
-      steps {
-        sh 'terraform apply -auto-approve'
-      }
-    }
-    stage('get kubeconfig for production') {
-      steps {
-        sh 'aws eks update-kubeconfig --region us-east-1 --name prod-cluster'
-        sh 'kubectl get nodes'
-      }
-    }
-    stage('Deploying the application to production') {
-      steps {
-        sh 'kubectl apply -f app-deploy.yml'
-        sh 'kubectl get svc'
-      }
-    }
+   
   }
 }
+
  
