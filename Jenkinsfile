@@ -20,7 +20,7 @@ pipeline {
      stage('Create Docker Image') {
       steps {
         echo 'This stage will Create a Docker image'
-        sh 'docker build -t mohankumar12/healthcare:9.0 .'
+        sh 'docker build -t mohankumar12/healthcare:10.0 .'
                           }
             }
      stage('Login to Dockerhub') {
@@ -34,7 +34,7 @@ pipeline {
     stage('Docker Push-Image') {
       steps {
         echo 'This stage will push my new image to the dockerhub'
-        sh 'docker push mohankumar12/healthcare:9.0'
+        sh 'docker push mohankumar12/healthcare:10.0'
             }
       }
     stage('AWS-Login') {
