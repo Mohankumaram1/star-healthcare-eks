@@ -1,6 +1,11 @@
 pipeline {
   agent any
       stages {
-        stage('Git Checkout') {
+        stage('terraform destroy') {
           steps {
-             sh ''
+             sh 'terraform destroy -auto-approve'
+        }
+     }
+}
+}
+
